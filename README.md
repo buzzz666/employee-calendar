@@ -1,5 +1,3 @@
-# vue-employee-calendar
-
 ## Project setup
 ```
 npm install

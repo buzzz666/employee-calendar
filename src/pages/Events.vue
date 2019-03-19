@@ -86,7 +86,6 @@
         methods: {
             changeEventType(id, date, state){
                 db.setEventForDateEmployee(id, date, state)
-                db.setEventForDateEmployee(id, date, state)
             },
             getCurrentDate()
             {

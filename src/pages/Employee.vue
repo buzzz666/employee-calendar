@@ -20,7 +20,29 @@
                     <p>Contract started on: {{ employee.contract_start }}</p>
                 </div>
             </v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="error" @click="showDeleteModal = true">Delete</v-btn>
+            </v-card-actions>
         </v-card>
+
+        <v-dialog
+                v-model="showDeleteModal"
+        >
+            <v-card tile>
+                <v-toolbar card dark color="primary">
+                    <v-toolbar-title>Delete Employee</v-toolbar-title>
+                </v-toolbar>
+                <v-card-text>
+                    <p>Are you sure want to delete {{ employee.name }}?</p>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn @click="deleteEmployee" color="primary">delete</v-btn>
+                    <v-btn @click="showDeleteModal = false" color="secondary">cancel</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </div>
 </template>
 
@@ -30,12 +52,19 @@
     export default {
         data() {
             return {
-                employee: null
+                employee: null,
+                showDeleteModal: false
             }
         },
         created(){
             this.employee = db.getEmployeeById(parseInt(this.$route.params.id))
         },
+        methods: {
+            deleteEmployee(){
+                db.deleteEmployee(this.employee.id)
+                this.$router.push('/employees')
+            }
+        }
     }
 </script>
 

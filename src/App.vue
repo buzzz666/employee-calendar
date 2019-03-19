@@ -140,21 +140,21 @@
 
         user: {name: 'Admin'},
 
-        currentPage: 'Events',
+        currentPage: 'Calendar',
         currentPageLabelVisible: true,
 
         disableNav: false,
 
         navigation: [
           {
-            icon: 'event',
-            text: 'Events',
-            to: '/'
-          },
-          {
             icon: 'calendar_today',
             text: 'Calendar',
             to: '/calendar'
+          },
+          {
+            icon: 'event',
+            text: 'States',
+            to: '/'
           },
           {
             icon: 'supervised_user_circle',

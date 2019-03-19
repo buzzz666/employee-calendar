@@ -15,7 +15,7 @@ export default new VueRouter({
             path: '/',
             component: Events,
             meta: {
-                name: 'Events'
+                name: 'States'
             }
         },
         {

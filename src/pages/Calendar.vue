@@ -2,54 +2,60 @@
     <div>
         <v-card>
             <v-card-text>
-                <v-menu
-                        v-model="pickerMenu"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        lazy
-                        transition="scale-transition"
-                        offset-y
-                        full-width
-                        min-width="290px"
-                >
-                    <template v-slot:activator="{ on }">
-                        <v-text-field
-                                v-model="date"
-                                label="Select date to display events"
-                                prepend-icon="event"
-                                readonly
-                                v-on="on"
-                        ></v-text-field>
-                    </template>
-                    <v-date-picker v-model="date" @input="pickerMenu = false"></v-date-picker>
-                </v-menu>
+                <v-select
+                        :items="employees"
+                        label="Employee"
+                        item-text="name"
+                        item-value="id"
+                        v-model="employeeId"
+                ></v-select>
+                <v-select
+                        :items="months"
+                        label="Month"
+                        item-text="name"
+                        item-value="id"
+                        v-model="month"
+                ></v-select>
             </v-card-text>
         </v-card>
-        <v-card v-if="events.length" class="mt-2">
-            <div v-for="event in events" :key="event.employee.id">
-                <v-card class="elevation-0">
-                    <v-card-text>
-                        <p>{{event.employee.name}}</p>
-                    </v-card-text>
-                </v-card>
-            </div>
+        <v-card class="mt-3" v-if="month !== null && employeeId !== null">
+            <v-card-text>
+                <v-calendar
+                        ref="calendar"
+                        type="month"
+                        color="primary"
+                        :start="start"
+                        :weekdays="[1,2,3,4,5,6,0]"
+                        :show-month-on-first="false"
+                >
+                    <template v-slot:day="{ date }">
+                        <template v-for="(event, index) in eventsMap[date]">
+                            <div :key="index" :class="'dot ' + event.state"></div>
+                        </template>
+                    </template>
+                </v-calendar>
+            </v-card-text>
         </v-card>
     </div>
 </template>
 
 <script>
     import {db} from '../services/db'
+    import _ from 'lodash'
 
     export default {
-        data() {
+        data: function () {
             return {
-                pickerMenu: false,
-                date: null,
-                events: []
+                months: [],
+                month: null,
+                employees: [],
+                employeeId: null,
+                events: [],
+                start: null
             }
         },
-        watch:{
-            date(date){
+        watch: {
+            date(date) {
                 let employee = db.getEmployees()
                 this.events = []
                 for (let employeeItem of employee) {
@@ -59,10 +65,75 @@
                         state: event !== null ? event.state : null
                     })
                 }
+            },
+            month(month){
+                //this.$refs.calendar.scrollToTime()
+                this.start = this.$moment(month, 'YYYY MMMM').format('YYYY-MM-DD')
+                this.getEvents()
+            },
+            employeeId(){
+                this.getEvents()
             }
         },
+        created() {
+            this.employees = db.getEmployees()
+            this.months = this.getMonths()
+            this.month = this.$moment().format('YYYY MMMM')
+        },
         methods: {
+            getMonths() {
+                let months = []
+                let lowerDate = null
+                let higherDate = this.$moment()
+                _.each(this.employees, (item) => {
+                    if (lowerDate === null || this.$moment(item.contract_start).isBefore(lowerDate)) {
+                        lowerDate = this.$moment(item.contract_start).startOf('month')
+                    }
+                    if (higherDate === null || this.$moment(item.contract_start).isAfter(higherDate)) {
+                        higherDate = this.$moment(item.contract_start).endOf('month')
+                    }
+                })
+                while (lowerDate.isBefore(higherDate)) {
+                    months.push(lowerDate.format('YYYY MMMM'))
+                    lowerDate.add(1, 'months')
+                }
+                return months
+            },
+            getEvents(){
+                this.events = db.getEventsByEmployeeMonth(this.employeeId, this.$moment(this.month, 'YYYY MMMM').format('YYYY-MM'))
+            },
 
+        },
+        computed: {
+            eventsMap(){
+                const map = {}
+                this.events.forEach(e => (map[e.date] = map[e.date] || []).push(e))
+                return map
+            }
         }
     }
 </script>
+
+<style>
+    .dot{
+        width: 8px;
+        height: 8px;
+        border-radius: 4px;
+    }
+
+    .Present{
+        background-color: #388E3C;
+    }
+
+    .Absent{
+        background-color: #D32F2F;
+    }
+
+    .Weekend{
+        background-color: #FBC02D;
+    }
+
+    .Sick{
+        background-color: #455A64;
+    }
+</style>

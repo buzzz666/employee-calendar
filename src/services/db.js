@@ -102,6 +102,12 @@ export const db = {
         })
         this.commit()
     },
+    deleteEmployee(id){
+        this.data.employee = _.filter(this.data.employee, (item) => {
+            return item.id !== id
+        })
+        this.commit()
+    },
     getEventsForDate(date){
         return _.filter(this.data.events, (item) => {
             return item.date === date
@@ -112,6 +118,29 @@ export const db = {
             return item.date === date && item.employee === employeeId
         })
         return found.length > 0 ? found[0] : null
+    },
+    setEventForDateEmployee(id, date, state){
+        let found = false
+        this.data.events = _.map(this.data.events, (item) => {
+            if(item.employee === id && item.date === date) {
+                found = true
+                item.state = state
+            }
+            return item
+        })
+        if(found){
+            this.commit()
+        } else {
+            this.addEvent(id, date, state)
+        }
+    },
+    addEvent(employeeId, date, state){
+        this.data.events.push({
+            employee: employeeId,
+            date: date,
+            state: state
+        });
+        this.commit()
     },
     setEvent(employeeId, date, state){
         let exists = this.getEventForDateEmployee(date, employeeId)
@@ -130,4 +159,9 @@ export const db = {
         }
         this.commit()
     },
+    getEventsByEmployeeMonth(employeeId, month){
+        return _.filter(this.data.events, (item) => {
+            return item.date.startsWith(month) && item.employee === employeeId
+        })
+    }
 }

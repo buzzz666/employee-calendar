@@ -50,7 +50,7 @@
         },
         watch:{
             date(date){
-                let employee = db.getEmployee()
+                let employee = db.getEmployees()
                 this.events = []
                 for (let employeeItem of employee) {
                     let event = db.getEventForDateEmployee(date, employeeItem.id)

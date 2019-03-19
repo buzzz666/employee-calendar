@@ -8,9 +8,14 @@ Vue.config.productionTip = false
 import {db} from './services/db'
 db.ready()
 
-new Vue({
+const app = new Vue({
   router,
   render: h => h(App),
+  data(){
+    return {
+      currentPage: 'Events',
+    };
+  },
   created(){
     this.$on('get-page', () => {
       this.$emit('change-page', this.currentPage)
@@ -19,3 +24,8 @@ new Vue({
 }).$mount('#app')
 
 router.replace('/')
+router.beforeEach((to, from, next) => {
+  app.$emit('change-page', to.meta.name);
+  document.title = to.meta.name;
+  next();
+});

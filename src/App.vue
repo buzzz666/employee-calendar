@@ -8,7 +8,14 @@
             style="padding-top: 10px"
             width="220"
     >
+      <div class="drawer-logo-wrap">
+        <img src="calendar.png" alt="img" class="drawer-logo">
+        <h2 class="drawer-title">Employee Calendar</h2>
+        <p class="drawer-description">Apache Cordova + Vue.js App</p>
+      </div>
+
       <v-list dense>
+        <v-divider></v-divider>
         <template v-for="item in navigation">
           <v-list-group
                   v-if="item.children"
@@ -71,25 +78,14 @@
     >
       <v-toolbar-title style="width: 70%" class="ml-0 pl-0">
         <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-        <span class="hidden-sm-and-down" style="display: inline-flex; align-items: center">
-                    <h3 style="margin-left: 10px; transition: all 375ms ease; opacity: 0;" :class="[{
-                        'visible': currentPageLabelVisible
-                    }]">{{currentPage}}</h3>
-                </span>
+        <span style="display: inline-flex; align-items: center">
+          <h3 style="margin-left: 10px; transition: all 375ms ease; opacity: 0" :class="[{
+             'visible': currentPageLabelVisible
+          }]">{{currentPage}}</h3>
+        </span>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
-
-      <h3>Hello, {{user.name}}</h3>
-
-      <v-tooltip bottom>
-        <v-btn icon large href="#" slot="activator">
-          <v-avatar size="32px" tile>
-            <i class="v-icon material-icons">logout</i>
-          </v-avatar>
-        </v-btn>
-        <span>Logout</span>
-      </v-tooltip>
 
     </v-toolbar>
     <v-content>
@@ -144,13 +140,27 @@
 
         user: {name: 'Admin'},
 
-        currentPage: 'Home',
+        currentPage: 'Events',
         currentPageLabelVisible: true,
 
         disableNav: false,
 
         navigation: [
-          { icon: 'home', text: 'Home', to: '/' },
+          {
+            icon: 'event',
+            text: 'Events',
+            to: '/'
+          },
+          {
+            icon: 'calendar_today',
+            text: 'Calendar',
+            to: '/calendar'
+          },
+          {
+            icon: 'supervised_user_circle',
+            text: 'Employees',
+            to: '/employees'
+          },
         ],
 
         modal: {
@@ -224,6 +234,27 @@
 </style>
 
 <style>
+  .drawer-logo-wrap{
+    width: 220px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .drawer-logo{
+    width: 80px;
+  }
+
+  .drawer-title{
+    font-size: 18px;
+  }
+
+  .drawer-description{
+    font-size: 10px;
+  }
+
   h3.visible{
     opacity: 1 !important;
   }

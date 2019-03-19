@@ -11,61 +11,61 @@ export const db = {
                         "id": 0,
                         "name": "Minor Treleven",
                         "position": "Systems Administrator II",
-                        "contact_start": "2016-01-30"
+                        "contract_start": "2016-01-30"
                     },
                     {
                         "id": 1,
                         "name": "Alyse Rivelon",
                         "position": "Internal Auditor",
-                        "contact_start": "2017-09-14"
+                        "contract_start": "2017-09-14"
                     },
                     {
                         "id": 2,
                         "name": "Laurens Lanon",
                         "position": "Developer IV",
-                        "contact_start": "2016-03-23"
+                        "contract_start": "2016-03-23"
                     },
                     {
                         "id": 3,
                         "name": "Candra Tuppeny",
                         "position": "Web Designer III",
-                        "contact_start": "2017-12-07"
+                        "contract_start": "2017-12-07"
                     },
                     {
                         "id": 4,
                         "name": "Elvira Olivey",
                         "position": "Systems Administrator III",
-                        "contact_start": "2017-03-05"
+                        "contract_start": "2017-03-05"
                     },
                     {
                         "id": 5,
                         "name": "Carole Hutchason",
                         "position": "Assistant Professor",
-                        "contact_start": "2018-01-21"
+                        "contract_start": "2018-01-21"
                     },
                     {
                         "id": 6,
                         "name": "Pat Kliesl",
                         "position": "Graphic Designer",
-                        "contact_start": "2018-07-01"
+                        "contract_start": "2018-07-01"
                     },
                     {
                         "id": 7,
                         "name": "Lindi Dodswell",
                         "position": "VP Sales",
-                        "contact_start": "2018-01-15"
+                        "contract_start": "2018-01-15"
                     },
                     {
                         "id": 8,
                         "name": "Zoe Cash",
                         "position": "Recruiting Manager",
-                        "contact_start": "2018-03-05"
+                        "contract_start": "2018-03-05"
                     },
                     {
                         "id": 9,
                         "name": "Lani Pinch",
                         "position": "Senior Financial Analyst",
-                        "contact_start": "2018-06-05"
+                        "contract_start": "2018-06-05"
                     }
                 ],
                 events: [
@@ -83,8 +83,24 @@ export const db = {
     commit(){
         window.localStorage.setItem('database', JSON.stringify(this.data))
     },
-    getEmployee(){
+    getEmployees(){
         return this.data.employee
+    },
+    getEmployeeById(id){
+        return _.filter(this.data.employee, (item) => {
+            return item.id === id
+        })[0]
+    },
+    addEmployee(name, position, contract_start){
+        let employees = this.getEmployees()
+        let last = employees[employees.length - 1]
+        this.data.employee.push({
+            id: last.id + 1,
+            name: name,
+            position: position,
+            contract_start: contract_start
+        })
+        this.commit()
     },
     getEventsForDate(date){
         return _.filter(this.data.events, (item) => {
